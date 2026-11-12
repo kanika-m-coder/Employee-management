@@ -33,7 +33,7 @@ function show(id) {
 
   const bdc = $("bdc");
   bdc.style.display = "block";
-  $("bdt").textContent = `${r.name} (${r.empId})`;
+  $("bdt").textContent = `${r.name} (#${r.empId})`;
   $("bdSub").textContent = `${r.department} Department · Pay Period: ${getMonthLabel(ym().year, ym().month)}`;
 
   const gross = r.basic + r.hra + r.da;
@@ -41,7 +41,7 @@ function show(id) {
   const perDayRate = r.workingDays > 0 ? (r.basic / r.workingDays) : 0;
 
   // Attendance chips
-  const chip = (lbl, val, cls) => `<div class="chip ${cls || ""}"><b>${val}</b> <small style="color:#64748b">${lbl}</small></div>`;
+  const chip = (lbl, val, cls) => `<div class="chip ${cls || ""}"><b>${val}</b> <small style="color:var(--text-secondary)">${lbl}</small></div>`;
   $("bdAttChips").innerHTML = 
     chip("Month Weekdays", r.workingDays) +
     chip("Days Present", r.daysPresent, "ok") +
@@ -71,7 +71,7 @@ function show(id) {
     • <b>Per-Day Rate:</b> Basic (${fmt(r.basic)}) ÷ ${r.workingDays} working days = <b>${fmt(perDayRate)} / day</b><br>
     • <b>Absence Deduction:</b> ${r.absentDays} absent days × ${fmt(perDayRate)} = <b>${fmt(r.absenceDeduction)}</b><br>
     • <b>Statutory PF Deduction:</b> 12% of Basic = <b>${fmt(r.pf)}</b><br>
-    • <b>Net Take-Home:</b> Gross (${fmt(gross)}) − Total Deductions (${fmt(totDeduct)}) = <b style="color:#1e3a8a">${fmt(r.net)}</b>
+    • <b>Net Take-Home:</b> Gross (${fmt(gross)}) − Total Deductions (${fmt(totDeduct)}) = <b style="color:var(--secondary-navy)">${fmt(r.net)}</b>
   `;
 
   bdc.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -92,7 +92,7 @@ async function analyzeMonth() {
     $("analysisMonthTitle").textContent = `${getMonthLabel(year, month)} (${workingDays} Working Days)`;
 
     if (!data.length) {
-      $("analysisChips").innerHTML = `<span style="color:#dc2626">No attendance records found for this month yet.</span>`;
+      $("analysisChips").innerHTML = `<span style="color:var(--status-absent)">No attendance records found for this month yet.</span>`;
       $("analysisTable").innerHTML = `<p class="empty">Please record attendance for ${getMonthLabel(year, month)} before processing payroll.</p>`;
       return;
     }
@@ -102,20 +102,25 @@ async function analyzeMonth() {
     const totAbs = data.reduce((a, x) => a + (x.absent || 0), 0);
 
     $("analysisChips").innerHTML = `
-      <div class="chip"><b>${data.length}</b> <small style="color:#64748b">Employees Analyzed</small></div>
-      <div class="chip"><b>${workingDays}</b> <small style="color:#64748b">Weekday Working Days</small></div>
-      <div class="chip ok"><b>${avgAtt}%</b> <small style="color:#64748b">Average Attendance</small></div>
-      <div class="chip"><b>${totPres}</b> <small style="color:#16a34a">Total Days Present</small></div>
-      <div class="chip ${totAbs > 0 ? "bad" : ""}"><b>${totAbs}</b> <small style="color:#dc2626">Total Days Absent</small></div>
+      <div class="chip"><b>${data.length}</b> <small style="color:var(--text-secondary)">Employees Analyzed</small></div>
+      <div class="chip"><b>${workingDays}</b> <small style="color:var(--text-secondary)">Weekday Working Days</small></div>
+      <div class="chip ok"><b>${avgAtt}%</b> <small style="color:var(--status-present)">Average Attendance</small></div>
+      <div class="chip"><b>${totPres}</b> <small style="color:var(--status-present)">Total Days Present</small></div>
+      <div class="chip ${totAbs > 0 ? "bad" : ""}"><b>${totAbs}</b> <small style="color:var(--status-absent)">Total Days Absent</small></div>
     `;
 
     table("analysisTable", [
-      ["Employee", x => `${x.empId} – <b>${esc(x.name)}</b>`],
+      ["Employee", x => `
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:700;color:var(--secondary-navy);font-size:12px;background:var(--bg-primary);padding:2px 6px;border-radius:4px;border:1px solid var(--border)">#${x.empId}</span>
+          <span style="font-weight:600;color:var(--text-primary)">${esc(x.name)}</span>
+        </div>
+      `],
       ["Department", "department"],
-      ["Present", x => `<span style="color:#16a34a;font-weight:600">${x.present} days</span>`],
-      ["Half Days", x => x.halfDays ? `<span style="color:#d97706;font-weight:600">${x.halfDays} (0.5×)</span>` : "0"],
-      ["Paid Leaves", x => `<span style="color:#2563eb">${x.onLeave || 0}</span>`],
-      ["Absent", x => x.absent ? `<span style="color:#dc2626;font-weight:600">${x.absent} days</span>` : "0"],
+      ["Present", x => `<span style="color:var(--status-present);font-weight:600">${x.present} days</span>`],
+      ["Half Days", x => x.halfDays ? `<span style="color:var(--status-pending);font-weight:600">${x.halfDays} (0.5×)</span>` : "0"],
+      ["Paid Leaves", x => `<span style="color:var(--primary-accent);font-weight:600">${x.onLeave || 0}</span>`],
+      ["Absent", x => x.absent ? `<span style="color:var(--status-absent);font-weight:600">${x.absent} days</span>` : "0"],
       ["Attendance %", x => `<span class="badge ${x.attendancePct >= 80 ? "Approved" : "Pending"}">${x.attendancePct}%</span>`],
       ["Status", x => x.absent > 0 || x.halfDays > 0 ? `<span class="badge Pending">Deduction Applies</span>` : `<span class="badge Approved">Full Salary</span>`]
     ], data, "No attendance records available for this month.");
@@ -141,15 +146,25 @@ async function load() {
     $("mNet").textContent = fmt(totalNet);
 
     table("tb", [
-      ["Employee", x => `<b>${x.empId}</b> – ${esc(x.name)}`],
+      ["Employee", x => `
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:700;color:var(--secondary-navy);font-size:12px;background:var(--bg-primary);padding:2px 6px;border-radius:4px;border:1px solid var(--border)">#${x.empId}</span>
+          <span style="font-weight:600;color:var(--text-primary)">${esc(x.name)}</span>
+        </div>
+      `],
       ["Department", "department"],
-      ["Days Present", x => `<span style="color:#16a34a;font-weight:600">${x.daysPresent}</span>`],
-      ["Absent Deducted", x => x.absentDays > 0 ? `<span style="color:#dc2626;font-weight:600">${x.absentDays} d</span>` : "0"],
+      ["Days Present", x => `<span style="color:var(--status-present);font-weight:600">${x.daysPresent}</span>`],
+      ["Absent Deducted", x => x.absentDays > 0 ? `<span style="color:var(--status-absent);font-weight:600">${x.absentDays} d</span>` : "0"],
       ["Basic Salary", x => fmt(x.basic)],
       ["Gross Pay (Basic+HRA+DA)", x => fmt(x.basic + x.hra + x.da)],
-      ["Total Deductions (PF+Abs)", x => `<span style="color:#dc2626">−${fmt(x.pf + x.absenceDeduction)}</span>`],
-      ["Net Salary", x => `<span style="font-size:14.5px;font-weight:700;color:#1e40af">${fmt(x.net)}</span>`],
-      ["Action", x => `<button class="lnk" style="padding:4px 8px;border-radius:6px;background:#eff6ff" onclick="show(${x.empId})">View Payslip</button>`]
+      ["Total Deductions (PF+Abs)", x => `<span style="color:var(--status-absent)">−${fmt(x.pf + x.absenceDeduction)}</span>`],
+      ["Net Salary", x => `<span style="font-size:14px;font-weight:800;color:var(--secondary-navy)">${fmt(x.net)}</span>`],
+      ["Action", x => `
+        <button type="button" class="btn-sm edit-btn" onclick="show(${x.empId})">
+          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          View Payslip
+        </button>
+      `]
     ], rows, "No payroll generated for this month yet. Use the buttons above to analyze attendance and calculate salary.");
 
   } catch (e) {
@@ -180,7 +195,7 @@ $("f").onsubmit = async e => {
     toast(x.message, "bad");
   } finally {
     calcBtn.disabled = false;
-    calcBtn.textContent = "⚡ 2. Calculate & Generate Salary";
+    calcBtn.textContent = "2. Calculate & Generate Salary";
   }
 };
 

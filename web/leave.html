@@ -1,1 +1,106 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Leave management · AttendPay</title><link rel="stylesheet" href="css/style.css"></head><body><div class="layout"><aside class="sidebar"><div class="brand"><i>A</i>AttendPay</div><nav class="nav" id="nav"></nav></aside><div><header class="top"><h1 id="title">Leave management</h1><div class="user"><span id="uname"></span><div class="avatar" id="av"></div><button class="btn ghost" onclick="logout()">Sign out</button></div></header><main><div class="notice" id="err" role="alert"></div><div id="fcard" class="card"><h3>Record leave</h3><form id="f" class="fg"><div><label for="emp">Employee</label><select id="emp" required></select></div><div><label for="type">Leave type</label><select id="type"><option>Casual</option><option>Sick</option><option>Earned</option><option>Loss of Pay</option></select></div><div><label for="sd">Start date</label><input id="sd" type="date" required></div><div><label for="ed">End date</label><input id="ed" type="date" required></div><div><label for="stt">Status</label><select id="stt"><option>Approved</option><option>Pending</option><option>Rejected</option></select></div><div><label for="rs">Reason</label><input id="rs"></div><div class="act"><button class="btn">Save leave</button></div></form></div><div class="card"><h3>Leave records</h3><div id="tb" class="scroll"></div></div><div class="card" id="scard"><h3>Absent days per employee</h3><div id="sm" class="scroll"></div></div></main></div></div><script src="js/app.js"></script><script src="js/leave.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leave Management · AttendPay</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar"></aside>
+
+    <div class="main-wrapper">
+      <header class="top">
+        <h1 id="title">Leave Management & Workflows</h1>
+        <div class="user">
+          <span id="uname"></span>
+          <div class="avatar" id="av"></div>
+          <button class="btn ghost" onclick="logout()">Sign out</button>
+        </div>
+      </header>
+
+      <main>
+        <div class="notice" id="err" role="alert"></div>
+
+        <!-- Apply / Record Leave Card -->
+        <div id="fcard" class="card">
+          <div class="card-header-row">
+            <div>
+              <h3>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--primary-accent)" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="12" y1="6" x2="16" y2="6"/><line x1="12" y1="10" x2="16" y2="10"/></svg>
+                Apply & Record Leave Request
+              </h3>
+              <p style="font-size:12px;color:var(--text-secondary);margin-top:2px">Submit statutory leave requests and approved absence workflows</p>
+            </div>
+          </div>
+
+          <form id="f" class="fg">
+            <div>
+              <label for="emp">Employee</label>
+              <select id="emp" required></select>
+            </div>
+            <div>
+              <label for="type">Leave Classification</label>
+              <select id="type">
+                <option value="Casual">Casual Leave (Paid)</option>
+                <option value="Sick">Sick Leave (Paid)</option>
+                <option value="Earned">Earned Leave (Paid)</option>
+                <option value="Loss of Pay">Loss of Pay (Unpaid Deduction)</option>
+              </select>
+            </div>
+            <div>
+              <label for="sd">Start Date</label>
+              <input id="sd" type="date" required>
+            </div>
+            <div>
+              <label for="ed">End Date</label>
+              <input id="ed" type="date" required>
+            </div>
+            <div>
+              <label for="stt">Approval Status</label>
+              <select id="stt">
+                <option value="Approved">Approved</option>
+                <option value="Pending">Pending Review</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+            <div>
+              <label for="rs">Reason / Purpose</label>
+              <input id="rs" placeholder="e.g. Annual family travel / Medical">
+            </div>
+            <div class="act">
+              <button type="submit" class="btn btn-accent">Submit Leave Record</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Leave Requests Table Card -->
+        <div class="card" style="margin-top:22px">
+          <div class="card-header-row">
+            <div>
+              <h3>Organization Leave Logs</h3>
+              <p style="font-size:12px;color:var(--text-secondary);margin-top:2px">Track approved, pending and rejected workforce leaves</p>
+            </div>
+          </div>
+          <div id="tb" class="scroll"></div>
+        </div>
+
+        <!-- Absence Summary by Employee Card -->
+        <div class="card" id="scard" style="margin-top:22px">
+          <div class="card-header-row">
+            <div>
+              <h3>Cumulative Absence & Leave Summary</h3>
+              <p style="font-size:12px;color:var(--text-secondary);margin-top:2px">Breakdown of absent days, half-days, and leaves per employee</p>
+            </div>
+          </div>
+          <div id="sm" class="scroll"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/leave.js"></script>
+</body>
+</html>
