@@ -1,0 +1,16 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard · AttendPay</title><link rel="stylesheet" href="css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script></head>
+<body><div class="layout">
+<aside class="sidebar"><div class="brand"><i>A</i>AttendPay</div><nav class="nav" id="nav"></nav></aside>
+<div><header class="top"><h1 id="title">Dashboard</h1><div class="user"><span id="uname"></span><div class="avatar" id="av"></div><button class="btn ghost" onclick="logout()">Sign out</button></div></header>
+<main><div class="notice" id="err" role="alert"></div>
+<section class="cards">
+<div class="card stat"><small>Total employees</small><b id="total">–</b></div>
+<div class="card stat ok"><small>Present</small><b id="present">–</b></div>
+<div class="card stat bad"><small>Absent</small><b id="absent">–</b></div>
+<div class="card stat warn"><small>On leave</small><b id="leave">–</b></div>
+<div class="card stat"><small>Latest monthly payroll</small><b id="payroll">–</b></div></section>
+<section class="grid2">
+<div class="card"><h3>Department-wise attendance</h3><div class="chart"><canvas id="dept"></canvas></div></div>
+<div class="card"><h3>Monthly attendance</h3><div class="chart"><canvas id="month"></canvas></div></div></section>
+</main></div></div><script src="js/app.js"></script><script src="js/dashboard.js"></script></body></html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in · AttendPay</title>
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="login-page">
+  <main class="login-container">
+    <!-- Left Hero & Branding Section (Light Themed) -->
+    <section class="brand-hero">
+      <div class="brand-badge">
+        <div class="brand-logo-icon">A</div>
+        <div class="brand-name">Attend<span>Pay</span></div>
+      </div>
+
+      <div class="hero-body">
+        <h2 class="hero-title">Attendance & Payroll, <span>Unified.</span></h2>
+        <p class="hero-desc">
+          Automated workforce intelligence — stream attendance records, verify leave workflows, calculate statutory payroll, and analyze team trends in real time.
+        </p>
+
+        <div class="feature-pills">
+          <div class="feature-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Automated Weekday & Absence Salary Deductions</span>
+          </div>
+          <div class="feature-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Live Python Data Analysis with Matplotlib</span>
+          </div>
+          <div class="feature-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <span>Single Admin System with Role Controls</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-footer">
+        Scenario 13 · Employee Attendance & Payroll Management Analysis System
+      </div>
+    </section>
+
+    <!-- Right Login Form Section -->
+    <section class="form-section">
+      <div class="form-header">
+        <h1>Welcome Back</h1>
+        <p id="sub-msg">Select your role and enter your credentials to access your portal.</p>
+      </div>
+
+      <!-- Animated Role Toggle Switcher -->
+      <div class="role-switch-container">
+        <div class="role-slider" id="roleSlider"></div>
+        <button type="button" class="role-btn active" id="btnAdmin" data-role="ADMIN">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          Admin
+        </button>
+        <button type="button" class="role-btn" id="btnEmp" data-role="EMPLOYEE">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+          Employee
+        </button>
+      </div>
+
+      <!-- Error Notice -->
+      <div class="notice" id="err" role="alert"></div>
+
+      <!-- Sign In Form -->
+      <form id="f" novalidate>
+        <!-- Username / Employee ID Field Box -->
+        <div class="input-group">
+          <div class="input-label-row">
+            <label class="input-label" for="u" id="ul">Admin Username</label>
+          </div>
+          <div class="input-pill-wrapper" id="uWrapper">
+            <div class="input-icon-badge">
+              <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <input id="u" class="custom-input" required autocomplete="username" placeholder="e.g. admin" autofocus>
+          </div>
+        </div>
+
+        <!-- Password Field Box with Visibility Toggle -->
+        <div class="input-group">
+          <div class="input-label-row">
+            <label class="input-label" for="p">Password</label>
+          </div>
+          <div class="input-pill-wrapper" id="pWrapper">
+            <div class="input-icon-badge">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </div>
+            <input id="p" class="custom-input" type="password" required minlength="4" autocomplete="current-password" placeholder="••••••••">
+            <button type="button" class="eye-toggle-btn" id="eyeBtn" title="Toggle password visibility">
+              <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit Button (Unified Primary Color) -->
+        <button type="submit" class="btn-submit" id="go">
+          <span>Sign In to AttendPay</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+
+      <!-- Admin Registration Link -->
+      <div class="form-footer" id="regLinkArea">
+        Need to set up administrator access? <a href="register.html">Register as Admin</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let role = "ADMIN";
+    const $ = id => document.getElementById(id);
+    const uInput = $("u");
+    const pInput = $("p");
+    const roleSlider = $("roleSlider");
+    const btnAdmin = $("btnAdmin");
+    const btnEmp = $("btnEmp");
+    const subMsg = $("sub-msg");
+    const regLinkArea = $("regLinkArea");
+
+    // Dynamic Focus/Blur highlight transitions for shaped input pills
+    [uInput, pInput].forEach(inp => {
+      const wrap = inp.closest(".input-pill-wrapper");
+      inp.addEventListener("focus", () => wrap.classList.add("focused"));
+      inp.addEventListener("blur", () => wrap.classList.remove("focused"));
+    });
+
+    // Password visibility toggle
+    let showPass = false;
+    $("eyeBtn").addEventListener("click", () => {
+      showPass = !showPass;
+      pInput.type = showPass ? "text" : "password";
+      $("eyeIcon").innerHTML = showPass 
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"/>'
+        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    });
+
+    // Role switcher with smooth sliding transition
+    function setRole(r) {
+      role = r;
+      if (role === "ADMIN") {
+        roleSlider.style.transform = "translateX(0%)";
+        btnAdmin.classList.add("active");
+        btnEmp.classList.remove("active");
+        $("ul").textContent = "Admin Username";
+        uInput.placeholder = "e.g. admin";
+        subMsg.textContent = "Sign in with administrator privileges to manage the organization.";
+        regLinkArea.style.display = "block";
+      } else {
+        roleSlider.style.transform = "translateX(100%)";
+        btnEmp.classList.add("active");
+        btnAdmin.classList.remove("active");
+        $("ul").textContent = "Employee ID";
+        uInput.placeholder = "e.g. 101";
+        subMsg.textContent = "Sign in with your Employee ID to view your records and requests.";
+        regLinkArea.style.display = "none";
+      }
+    }
+
+    btnAdmin.addEventListener("click", () => setRole("ADMIN"));
+    btnEmp.addEventListener("click", () => setRole("EMPLOYEE"));
+
+    // Handle form submission
+    $("f").onsubmit = async e => {
+      e.preventDefault();
+      $("err").style.display = "none";
+      const submitBtn = $("go");
+      const prevBtnText = submitBtn.innerHTML;
+
+      submitBtn.innerHTML = `<span>Signing in...</span>`;
+      submitBtn.style.opacity = "0.8";
+      submitBtn.disabled = true;
+
+      try {
+        const username = uInput.value.trim();
+        const password = pInput.value;
+
+        if (!username || !password) {
+          throw new Error("Please enter both username and password.");
+        }
+
+        const r = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password, role })
+        });
+
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || "Invalid username or password");
+
+        sessionStorage.setItem("user", JSON.stringify(d));
+        location.href = role === "ADMIN" ? "index.html" : "attendance.html";
+      } catch (x) {
+        $("err").textContent = x.message === "Failed to fetch"
+          ? "Cannot reach the server. Ensure the Java backend is running."
+          : x.message;
+        $("err").style.display = "block";
+        submitBtn.innerHTML = prevBtnText;
+        submitBtn.style.opacity = "1";
+        submitBtn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>

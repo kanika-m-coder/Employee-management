@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Payroll Management · AttendPay</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><i>A</i>AttendPay</div>
+      <nav class="nav" id="nav"></nav>
+    </aside>
+
+    <div>
+      <header class="top">
+        <h1 id="title">Payroll Management & Salary Engine</h1>
+        <div class="user">
+          <span id="uname"></span>
+          <div class="avatar" id="av"></div>
+          <button class="btn ghost" onclick="logout()">Sign out</button>
+        </div>
+      </header>
+
+      <main>
+        <div class="notice" id="err" role="alert"></div>
+
+        <!-- Metric Overview Cards -->
+        <div class="payroll-hero" id="heroMetrics">
+          <div class="card stat">
+            <small>Active Employees</small>
+            <b id="mEmp">10</b>
+          </div>
+          <div class="card stat">
+            <small>Month Working Days (Mon–Fri)</small>
+            <b id="mWd">22</b>
+          </div>
+          <div class="card stat ok">
+            <small>Net Monthly Payroll Payout</small>
+            <b id="mNet">₹0.00</b>
+          </div>
+          <div class="card stat warn">
+            <small>Statutory Rules</small>
+            <span style="font-size:13px;font-weight:600;display:block;margin-top:6px;color:#1e293b">HRA 20% · DA 10% · PF 12%</span>
+          </div>
+        </div>
+
+        <!-- Calculation & Action Controls -->
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+            <div>
+              <h3>Monthly Payroll Processor</h3>
+              <p id="rules" style="color:#64748B;font-size:13px;margin-top:4px"></p>
+            </div>
+            <span class="badge Approved" style="font-size:12px;padding:6px 14px">Rule Engine: Verified</span>
+          </div>
+
+          <form id="f" class="fg">
+            <div>
+              <label for="emp">Employee Scope</label>
+              <select id="emp"></select>
+            </div>
+            <div>
+              <label for="mo">Payroll Month</label>
+              <input id="mo" type="month" required>
+            </div>
+            <div class="payroll-step-bar">
+              <button type="button" class="btn btn-analyze" id="btnAnalyze" title="Analyze attendance for all employees before calculating">
+                🔍 1. Analyze Month Attendance
+              </button>
+              <button type="submit" class="btn" id="btnCalc">
+                ⚡ 2. Calculate & Generate Salary
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Attendance Analysis & Readiness Section -->
+        <div class="analysis-panel" id="analysisCard" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+            <h3>📊 Pre-Payroll Attendance Analysis – <span id="analysisMonthTitle"></span></h3>
+            <button class="btn ghost" style="padding:4px 10px;font-size:12px" onclick="$('analysisCard').style.display='none'">Hide Analysis</button>
+          </div>
+          <p style="color:#4338ca;font-size:13px;margin-bottom:14px">
+            Attendance records have been analyzed for all employees in this period. Review present days, half days, paid leaves, and projected absence deductions before finalizing salary calculations.
+          </p>
+          <div id="analysisChips" class="chips"></div>
+          <div id="analysisTable" class="scroll"></div>
+        </div>
+
+        <!-- Itemized Salary Breakdown / Payslip Card -->
+        <div class="payslip-container" id="bdc" style="display:none">
+          <div class="payslip-header">
+            <div>
+              <span class="badge Approved" style="margin-bottom:8px;display:inline-block">Official Payslip Breakdown</span>
+              <h2 id="bdt" style="font-size:22px;color:#0f172a"></h2>
+              <p id="bdSub" style="color:#64748b;font-size:13px;margin-top:2px"></p>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn ghost" onclick="window.print()">🖨️ Print Payslip</button>
+              <button class="btn ghost" onclick="$('bdc').style.display='none'">✕ Close</button>
+            </div>
+          </div>
+
+          <!-- Attendance Basis Chips -->
+          <div class="chips" id="bdAttChips" style="margin-bottom:16px"></div>
+
+          <!-- Earnings vs Deductions Grid -->
+          <div class="payslip-grid">
+            <div class="payslip-box earnings">
+              <h4><span>Earnings & Allowances</span><span style="color:#16a34a">Amount (INR)</span></h4>
+              <div class="payslip-row"><span>Basic Salary</span><b id="slBasic"></b></div>
+              <div class="payslip-row"><span>House Rent Allowance (HRA +20%)</span><b id="slHra" style="color:#16a34a"></b></div>
+              <div class="payslip-row"><span>Dearness Allowance (DA +10%)</span><b id="slDa" style="color:#16a34a"></b></div>
+              <div class="payslip-row" style="border-top:1px solid #bbf7d0"><span>Gross Earnings (A)</span><b id="slGross" style="font-size:15px;color:#15803d"></b></div>
+            </div>
+
+            <div class="payslip-box deductions">
+              <h4><span>Deductions</span><span style="color:#dc2626">Amount (INR)</span></h4>
+              <div class="payslip-row">
+                <span>Per-Day Pay Rate (Basic ÷ Weekdays)</span>
+                <b id="slRate" style="color:#475569"></b>
+              </div>
+              <div class="payslip-row">
+                <span id="slAbsLabel">Absence Deduction (Absent Days × Per-Day Rate)</span>
+                <b id="slAbsDeduct" style="color:#dc2626"></b>
+              </div>
+              <div class="payslip-row">
+                <span>Provident Fund (PF −12% of Basic)</span>
+                <b id="slPf" style="color:#dc2626"></b>
+              </div>
+              <div class="payslip-row" style="border-top:1px solid #fecaca">
+                <span>Total Deductions (B)</span>
+                <b id="slTotDeduct" style="font-size:15px;color:#b91c1c"></b>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mathematical Formula Explanation Box -->
+          <div class="payslip-formula" id="bdFormula"></div>
+
+          <!-- Net Salary Total Banner -->
+          <div class="payslip-total">
+            <div>
+              <span>Net Take-Home Salary (Gross − Deductions)</span>
+              <p style="font-size:12px;color:#bfdbfe;margin-top:2px">Disbursed directly into employee bank account</p>
+            </div>
+            <b id="slNet"></b>
+          </div>
+        </div>
+
+        <!-- Generated Payroll Records -->
+        <div class="card" style="margin-top:18px">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+            <h3>Calculated Payroll Records – <span id="tot" style="color:#2563eb"></span></h3>
+          </div>
+          <div id="tb" class="scroll"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/payroll.js"></script>
+</body>
+</html>

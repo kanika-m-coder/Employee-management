@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Registration · AttendPay</title>
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="login-page">
+  <main class="login-container">
+    <!-- Left Hero & Info Section -->
+    <section class="brand-hero">
+      <div class="brand-badge">
+        <div class="brand-logo-icon">A</div>
+        <div class="brand-name">Attend<span>Pay</span></div>
+      </div>
+
+      <div class="hero-body">
+        <h2 class="hero-title">Administrator <span>Portal Setup.</span></h2>
+        <p class="hero-desc">
+          AttendPay enforces a strict single-administrator access model. Once the primary admin account is registered, only that administrator can manage the system until the account is deleted.
+        </p>
+
+        <div class="feature-pills">
+          <div class="feature-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <span>Single Admin Security Architecture</span>
+          </div>
+          <div class="feature-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <span>Transferable by Account Deletion</span>
+          </div>
+          <div class="feature-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span>Full System & Payroll Authority</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-footer">
+        Scenario 13 · Employee Attendance & Payroll Management Analysis System
+      </div>
+    </section>
+
+    <!-- Right Registration Form Section -->
+    <section class="form-section">
+      <div class="form-header">
+        <h1>Admin Registration</h1>
+        <p id="sub-msg">Set up the organization's primary administrator account.</p>
+      </div>
+
+      <!-- Status Notice Banner -->
+      <div id="statusBanner" style="margin-bottom:18px"></div>
+
+      <!-- Error Notice -->
+      <div class="notice" id="err" role="alert"></div>
+
+      <!-- Registration Form -->
+      <form id="regForm" novalidate>
+        <!-- Username Field -->
+        <div class="input-group">
+          <div class="input-label-row">
+            <label class="input-label" for="ru">Admin Username</label>
+          </div>
+          <div class="input-pill-wrapper" id="ruWrap">
+            <div class="input-icon-badge">
+              <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <input id="ru" class="custom-input" required minlength="3" autocomplete="username" placeholder="e.g. admin" autofocus>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="input-group">
+          <div class="input-label-row">
+            <label class="input-label" for="rp">Password</label>
+          </div>
+          <div class="input-pill-wrapper" id="rpWrap">
+            <div class="input-icon-badge">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </div>
+            <input id="rp" class="custom-input" type="password" required minlength="4" placeholder="At least 4 characters">
+          </div>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="input-group">
+          <div class="input-label-row">
+            <label class="input-label" for="rpc">Confirm Password</label>
+          </div>
+          <div class="input-pill-wrapper" id="rpcWrap">
+            <div class="input-icon-badge">
+              <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <input id="rpc" class="custom-input" type="password" required minlength="4" placeholder="Re-enter password">
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit" id="btnSubmitReg">
+          <span>Create Admin Account</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+
+      <div class="form-footer">
+        Already registered? <a href="login.html">Sign in to your account</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const ruInput = $("ru");
+    const rpInput = $("rp");
+    const rpcInput = $("rpc");
+    const btnSubmit = $("btnSubmitReg");
+    const statusBanner = $("statusBanner");
+    const errBox = $("err");
+
+    // Dynamic Focus/Blur highlight transitions for input pills
+    [ruInput, rpInput, rpcInput].forEach(inp => {
+      const wrap = inp.closest(".input-pill-wrapper");
+      inp.addEventListener("focus", () => wrap.classList.add("focused"));
+      inp.addEventListener("blur", () => wrap.classList.remove("focused"));
+    });
+
+    let adminExists = false;
+
+    // Check single admin availability on page load
+    async function checkAdminStatus() {
+      try {
+        const res = await fetch("/api/admin-status");
+        const data = await res.json();
+        adminExists = data.exists;
+
+        if (adminExists) {
+          statusBanner.innerHTML = `
+            <div style="background:#fef2f2;border:1.5px solid #fecaca;color:#991b1b;padding:14px 18px;border-radius:14px;font-size:13.5px;line-height:1.5;">
+              <div style="font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Only one admin can access
+              </div>
+              An administrator account is already registered in the system. To allow a new administrator to register, the current administrator must first sign in and delete their account from the Admin portal.
+              <div style="margin-top:12px">
+                <a href="login.html" class="btn-submit" style="display:inline-flex;width:auto;padding:8px 18px;font-size:13px;text-decoration:none;">Go to Sign In</a>
+              </div>
+            </div>
+          `;
+          ruInput.disabled = true;
+          rpInput.disabled = true;
+          rpcInput.disabled = true;
+          btnSubmit.disabled = true;
+          btnSubmit.style.opacity = "0.5";
+          btnSubmit.style.cursor = "not-allowed";
+        } else {
+          statusBanner.innerHTML = `
+            <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;color:#166534;padding:12px 16px;border-radius:14px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+              Admin registration is open. Please register your account.
+            </div>
+          `;
+          ruInput.disabled = false;
+          rpInput.disabled = false;
+          rpcInput.disabled = false;
+          btnSubmit.disabled = false;
+          btnSubmit.style.opacity = "1";
+          btnSubmit.style.cursor = "pointer";
+        }
+      } catch (err) {
+        errBox.textContent = "Cannot connect to server. Ensure the Java backend is running.";
+        errBox.style.display = "block";
+      }
+    }
+
+    checkAdminStatus();
+
+    // Form submission
+    $("regForm").onsubmit = async e => {
+      e.preventDefault();
+      errBox.style.display = "none";
+
+      if (adminExists) {
+        errBox.textContent = "Only one admin can access. An admin account is already registered.";
+        errBox.style.display = "block";
+        return;
+      }
+
+      const u = ruInput.value.trim();
+      const p = rpInput.value;
+      const pc = rpcInput.value;
+
+      if (!u || !p) {
+        errBox.textContent = "Please fill in all required fields.";
+        errBox.style.display = "block";
+        return;
+      }
+
+      if (u.length < 3) {
+        errBox.textContent = "Username must be at least 3 characters.";
+        errBox.style.display = "block";
+        return;
+      }
+
+      if (p.length < 4) {
+        errBox.textContent = "Password must be at least 4 characters.";
+        errBox.style.display = "block";
+        return;
+      }
+
+      if (p !== pc) {
+        errBox.textContent = "Passwords do not match. Please re-enter.";
+        errBox.style.display = "block";
+        return;
+      }
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = `<span>Creating account...</span>`;
+
+      try {
+        const r = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: u, password: p })
+        });
+
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || "Registration failed");
+
+        statusBanner.innerHTML = `
+          <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;color:#166534;padding:16px 20px;border-radius:14px;font-size:14px;font-weight:700;text-align:center;">
+            🎉 Administrator account created successfully!<br>
+            <span style="font-size:13px;font-weight:500;color:#15803d">Redirecting to sign in page...</span>
+          </div>
+        `;
+        $("regForm").style.display = "none";
+
+        setTimeout(() => {
+          location.href = "login.html";
+        }, 1500);
+
+      } catch (x) {
+        errBox.textContent = x.message;
+        errBox.style.display = "block";
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = `<span>Create Admin Account</span><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+      }
+    };
+  </script>
+</body>
+</html>

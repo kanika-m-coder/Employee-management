@@ -1,0 +1,15 @@
+# Compiled Java
+*.class
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.venv
+env/
+venv/
+
+# System / OS
+Thumbs.db
+Desktop.ini
+.DS_Store
