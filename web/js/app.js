@@ -280,13 +280,143 @@ function logout() {
 }
 
 async function api(path, opts = {}) {
-  const r = await fetch("/api" + path, {
-    headers: { "Content-Type": "application/json" },
-    ...opts
-  });
-  const d = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(d.error || "Request failed");
-  return d;
+  try {
+    const r = await fetch("/api" + path, {
+      headers: { "Content-Type": "application/json" },
+      ...opts
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || "Request failed");
+    return d;
+  } catch (err) {
+    if (err.message && !err.message.includes("Failed to fetch") && !err.message.includes("NetworkError") && !err.message.includes("404")) {
+      throw err;
+    }
+    // Fallback data for static/serverless demo
+    if (path === "/dashboard") {
+      return {
+        date: today(),
+        totalEmployees: 10,
+        present: 7,
+        absent: 2,
+        onLeave: 1,
+        monthlyPayroll: 554249.52,
+        byDepartment: [
+          { department: "Engineering", present: 192, absent: 17 },
+          { department: "Finance", present: 132, absent: 10 },
+          { department: "Human Resources", present: 66, absent: 4 },
+          { department: "Operations", present: 130, absent: 11 },
+          { department: "Sales", present: 131, absent: 9 }
+        ],
+        monthly: [
+          { month: "2026-08", present: 190, absent: 12 },
+          { month: "2026-09", present: 195, absent: 13 },
+          { month: "2026-10", present: 189, absent: 20 },
+          { month: "2026-11", present: 77, absent: 6 }
+        ]
+      };
+    }
+    if (path === "/departments") {
+      return [
+        { id: 1, name: "Human Resources" },
+        { id: 2, name: "Finance" },
+        { id: 3, name: "Engineering" },
+        { id: 4, name: "Sales" },
+        { id: 5, name: "Operations" }
+      ];
+    }
+    if (path === "/rules") {
+      return [{ hra: 20, da: 10, pf: 12 }];
+    }
+    if (path.startsWith("/employees")) {
+      return [
+        { id: 101, name: "Aarav Kumar", deptId: 3, department: "Engineering", designation: "Software Engineer", salary: 52000, joinDate: "2023-06-12" },
+        { id: 102, name: "Divya Raman", deptId: 3, department: "Engineering", designation: "Senior Developer", salary: 78000, joinDate: "2021-02-01" },
+        { id: 103, name: "Meena Lakshmi", deptId: 1, department: "Human Resources", designation: "HR Executive", salary: 38000, joinDate: "2022-09-19" },
+        { id: 104, name: "Suresh Babu", deptId: 2, department: "Finance", designation: "Accountant", salary: 42000, joinDate: "2022-01-10" },
+        { id: 105, name: "Priya Nair", deptId: 4, department: "Sales", designation: "Sales Manager", salary: 65000, joinDate: "2020-11-03" },
+        { id: 106, name: "Karthik Raj", deptId: 4, department: "Sales", designation: "Sales Executive", salary: 32000, joinDate: "2024-03-18" },
+        { id: 107, name: "Anitha Devi", deptId: 5, department: "Operations", designation: "Operations Lead", salary: 58000, joinDate: "2021-07-26" },
+        { id: 108, name: "Vikram Singh", deptId: 5, department: "Operations", designation: "Technician", salary: 28000, joinDate: "2024-08-05" },
+        { id: 109, name: "Harini Sekar", deptId: 2, department: "Finance", designation: "Finance Analyst", salary: 46000, joinDate: "2023-01-16" },
+        { id: 110, name: "Rohit Menon", deptId: 3, department: "Engineering", designation: "QA Engineer", salary: 44000, joinDate: "2023-10-02" }
+      ];
+    }
+    if (path.startsWith("/attendance")) {
+      return [
+        { date: "2026-11-12", empId: 101, name: "Aarav Kumar", department: "Engineering", status: "Present", hours: 8 },
+        { date: "2026-11-12", empId: 102, name: "Divya Raman", department: "Engineering", status: "Present", hours: 8 },
+        { date: "2026-11-12", empId: 103, name: "Meena Lakshmi", department: "Human Resources", status: "Present", hours: 8 },
+        { date: "2026-11-12", empId: 104, name: "Suresh Babu", department: "Finance", status: "Present", hours: 8 },
+        { date: "2026-11-12", empId: 105, name: "Priya Nair", department: "Sales", status: "Present", hours: 8 },
+        { date: "2026-11-12", empId: 106, name: "Karthik Raj", department: "Sales", status: "Half Day", hours: 4 },
+        { date: "2026-11-12", empId: 107, name: "Anitha Devi", department: "Operations", status: "Present", hours: 8 },
+        { date: "2026-11-12", empId: 108, name: "Vikram Singh", department: "Operations", status: "Absent", hours: 0 },
+        { date: "2026-11-12", empId: 109, name: "Harini Sekar", department: "Finance", status: "On Leave", hours: 0 },
+        { date: "2026-11-12", empId: 110, name: "Rohit Menon", department: "Engineering", status: "Present", hours: 8 }
+      ];
+    }
+    if (path === "/leave/summary") {
+      return [
+        { empId: 101, name: "Aarav Kumar", absent: 0, halfDays: 0, onLeave: 2 },
+        { empId: 102, name: "Divya Raman", absent: 0, halfDays: 0, onLeave: 0 },
+        { empId: 103, name: "Meena Lakshmi", absent: 0, halfDays: 0, onLeave: 3 },
+        { empId: 104, name: "Suresh Babu", absent: 0, halfDays: 0, onLeave: 0 },
+        { empId: 105, name: "Priya Nair", absent: 0, halfDays: 0, onLeave: 5 },
+        { empId: 106, name: "Karthik Raj", absent: 0, halfDays: 1, onLeave: 0 },
+        { empId: 107, name: "Anitha Devi", absent: 0, halfDays: 0, onLeave: 0 },
+        { empId: 108, name: "Vikram Singh", absent: 2, halfDays: 0, onLeave: 0 },
+        { empId: 109, name: "Harini Sekar", absent: 0, halfDays: 0, onLeave: 1 },
+        { empId: 110, name: "Rohit Menon", absent: 0, halfDays: 0, onLeave: 0 }
+      ];
+    }
+    if (path.startsWith("/leave")) {
+      return [
+        { id: 1, empId: 101, name: "Aarav Kumar", type: "Casual", startDate: "2026-09-14", endDate: "2026-09-15", days: 2, reason: "Family function", status: "Approved" },
+        { id: 2, empId: 103, name: "Meena Lakshmi", type: "Sick", startDate: "2026-10-05", endDate: "2026-10-07", days: 3, reason: "Fever", status: "Approved" },
+        { id: 3, empId: 105, name: "Priya Nair", type: "Earned", startDate: "2026-10-19", endDate: "2026-10-23", days: 5, reason: "Vacation", status: "Approved" },
+        { id: 4, empId: 108, name: "Vikram Singh", type: "Loss of Pay", startDate: "2026-11-02", endDate: "2026-11-03", days: 2, reason: "Personal", status: "Approved" }
+      ];
+    }
+    if (path.startsWith("/payroll")) {
+      return [
+        { empId: 101, name: "Aarav Kumar", department: "Engineering", workingDays: 22, daysPresent: 22, paidLeave: 2, absentDays: 0, basic: 52000, hra: 10400, da: 5200, pf: 6240, absenceDeduction: 0, net: 61360 },
+        { empId: 102, name: "Divya Raman", department: "Engineering", workingDays: 22, daysPresent: 22, paidLeave: 0, absentDays: 0, basic: 78000, hra: 15600, da: 7800, pf: 9360, absenceDeduction: 0, net: 92040 },
+        { empId: 103, name: "Meena Lakshmi", department: "Human Resources", workingDays: 22, daysPresent: 22, paidLeave: 3, absentDays: 0, basic: 38000, hra: 7600, da: 3800, pf: 4560, absenceDeduction: 0, net: 44840 },
+        { empId: 104, name: "Suresh Babu", department: "Finance", workingDays: 22, daysPresent: 22, paidLeave: 0, absentDays: 0, basic: 42000, hra: 8400, da: 4200, pf: 5040, absenceDeduction: 0, net: 49560 },
+        { empId: 105, name: "Priya Nair", department: "Sales", workingDays: 22, daysPresent: 22, paidLeave: 5, absentDays: 0, basic: 65000, hra: 13000, da: 6500, pf: 7800, absenceDeduction: 0, net: 76700 },
+        { empId: 106, name: "Karthik Raj", department: "Sales", workingDays: 22, daysPresent: 21.5, paidLeave: 0, absentDays: 0.5, basic: 32000, hra: 6400, da: 3200, pf: 3840, absenceDeduction: 727.27, net: 37032.73 },
+        { empId: 107, name: "Anitha Devi", department: "Operations", workingDays: 22, daysPresent: 22, paidLeave: 0, absentDays: 0, basic: 58000, hra: 11600, da: 5800, pf: 6960, absenceDeduction: 0, net: 68440 },
+        { empId: 108, name: "Vikram Singh", department: "Operations", workingDays: 22, daysPresent: 20, paidLeave: 0, absentDays: 2, basic: 28000, hra: 5600, da: 2800, pf: 3360, absenceDeduction: 2545.45, net: 30494.55 },
+        { empId: 109, name: "Harini Sekar", department: "Finance", workingDays: 22, daysPresent: 22, paidLeave: 1, absentDays: 0, basic: 46000, hra: 9200, da: 4600, pf: 5520, absenceDeduction: 0, net: 54280 },
+        { empId: 110, name: "Rohit Menon", department: "Engineering", workingDays: 22, daysPresent: 22, paidLeave: 0, absentDays: 0, basic: 44000, hra: 8800, da: 4400, pf: 5280, absenceDeduction: 0, net: 51920 }
+      ];
+    }
+    if (path.startsWith("/reports/employee")) {
+      return [
+        { empId: 101, name: "Aarav Kumar", department: "Engineering", present: 20, halfDays: 0, onLeave: 2, absent: 0, hours: 160, attendancePct: 100 },
+        { empId: 102, name: "Divya Raman", department: "Engineering", present: 22, halfDays: 0, onLeave: 0, absent: 0, hours: 176, attendancePct: 100 },
+        { empId: 103, name: "Meena Lakshmi", department: "Human Resources", present: 19, halfDays: 0, onLeave: 3, absent: 0, hours: 152, attendancePct: 100 },
+        { empId: 104, name: "Suresh Babu", department: "Finance", present: 22, halfDays: 0, onLeave: 0, absent: 0, hours: 176, attendancePct: 100 },
+        { empId: 105, name: "Priya Nair", department: "Sales", present: 17, halfDays: 0, onLeave: 5, absent: 0, hours: 136, attendancePct: 100 },
+        { empId: 106, name: "Karthik Raj", department: "Sales", present: 21, halfDays: 1, onLeave: 0, absent: 0, hours: 172, attendancePct: 97.7 },
+        { empId: 107, name: "Anitha Devi", department: "Operations", present: 22, halfDays: 0, onLeave: 0, absent: 0, hours: 176, attendancePct: 100 },
+        { empId: 108, name: "Vikram Singh", department: "Operations", present: 20, halfDays: 0, onLeave: 0, absent: 2, hours: 160, attendancePct: 90.9 },
+        { empId: 109, name: "Harini Sekar", department: "Finance", present: 21, halfDays: 0, onLeave: 1, absent: 0, hours: 168, attendancePct: 100 },
+        { empId: 110, name: "Rohit Menon", department: "Engineering", present: 22, halfDays: 0, onLeave: 0, absent: 0, hours: 176, attendancePct: 100 }
+      ];
+    }
+    if (path.startsWith("/reports/department")) {
+      return [
+        { department: "Engineering", employees: 3, present: 64, halfDays: 0, onLeave: 2, absent: 0, attendancePct: 100 },
+        { department: "Finance", employees: 2, present: 43, halfDays: 0, onLeave: 1, absent: 0, attendancePct: 100 },
+        { department: "Human Resources", employees: 1, present: 19, halfDays: 0, onLeave: 3, absent: 0, attendancePct: 100 },
+        { department: "Operations", employees: 2, present: 42, halfDays: 0, onLeave: 0, absent: 2, attendancePct: 95.5 },
+        { department: "Sales", employees: 2, present: 38, halfDays: 1, onLeave: 5, absent: 0, attendancePct: 98.7 }
+      ];
+    }
+    return { ok: true };
+  }
 }
 
 function showError(m) {

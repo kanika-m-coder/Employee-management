@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/", "destination": "/web/login.html" },
+    { "source": "/login", "destination": "/web/login.html" },
+    { "source": "/index", "destination": "/web/index.html" },
+    { "source": "/dashboard", "destination": "/web/index.html" },
+    { "source": "/employees", "destination": "/web/employees.html" },
+    { "source": "/attendance", "destination": "/web/attendance.html" },
+    { "source": "/leave", "destination": "/web/leave.html" },
+    { "source": "/payroll", "destination": "/web/payroll.html" },
+    { "source": "/reports", "destination": "/web/reports.html" },
+    { "source": "/analytics", "destination": "/web/analytics.html" },
+    { "source": "/register", "destination": "/web/register.html" },
+    { "source": "/css/:match*", "destination": "/web/css/:match*" },
+    { "source": "/js/:match*", "destination": "/web/js/:match*" },
+    { "source": "/charts/:match*", "destination": "/web/charts/:match*" },
+    { "source": "/:page.html", "destination": "/web/:page.html" }
+  ]
+}
