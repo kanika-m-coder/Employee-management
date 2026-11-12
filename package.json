@@ -1,9 +1,0 @@
-{
-  "name": "attendpay-employee-payroll",
-  "version": "1.0.0",
-  "description": "AttendPay - Employee Attendance and Payroll Management System",
-  "private": true,
-  "scripts": {
-    "build": "echo 'Build complete'"
-  }
-}
