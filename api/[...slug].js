@@ -46,7 +46,7 @@ let ATTENDANCE = [
   { date: "2026-11-12", empId: 110, name: "Rohit Menon", department: "Engineering", status: "Present", hours: 8 }
 ];
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // CORS & Content-Type
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Access-Control-Allow-Origin", "*");

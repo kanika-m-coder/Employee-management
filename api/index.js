@@ -1,1 +1,1 @@
-export { default } from "./[...slug].js";
+module.exports = require("./[...slug].js");
