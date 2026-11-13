@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in | StaffDesk</title><link rel="stylesheet" href="style.css"></head>
+<body class="auth-page">
+<main class="auth-shell">
+  <div class="auth-brand"><b class="mark">S</b><span>StaffDesk<small>PEOPLE OPERATIONS</small></span></div>
+  <section class="auth-card">
+    <h1>Welcome back</h1><p class="auth-intro">Sign in to your StaffDesk account.</p>
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" type="button" data-role="ADMIN">Admin</button>
+      <button class="auth-tab" type="button" data-role="EMPLOYEE">Employee</button>
+    </div>
+    <form id="loginForm">
+      <input type="hidden" name="role" value="ADMIN">
+      <label id="identityLabel">Email address<input name="email" type="email" autocomplete="username" required></label>
+      <label id="passwordLabel">Password
+        <span class="password-field">
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+          <button id="passwordToggle" class="password-toggle" type="button" aria-label="Show password" title="Show password" aria-controls="password" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+              <path class="password-eye-slash" d="m3 3 18 18"></path>
+            </svg>
+          </button>
+        </span>
+      </label>
+      <button class="primary auth-submit">Sign in</button>
+    </form>
+    <p id="registerPrompt" class="auth-foot hidden">First time here? <a href="/register.html">Register the administrator account</a></p>
+    <p id="authMessage" class="auth-message hidden" role="alert"></p>
+  </section>
+  <p class="auth-caption">Employee Attendance &amp; Payroll Management</p>
+</main>
+<script src="login.js"></script>
+</body>
+</html>

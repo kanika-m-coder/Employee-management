@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Register administrator | StaffDesk</title><link rel="stylesheet" href="style.css"></head>
+<body class="auth-page">
+<main class="auth-shell">
+  <div class="auth-brand"><b class="mark">S</b><span>StaffDesk<small>PEOPLE OPERATIONS</small></span></div>
+  <section class="auth-card">
+    <h1>Set up administrator</h1><p class="auth-intro">Create the one administrator account for this installation.</p>
+    <form id="registerForm">
+      <label>Full name<input name="full_name" autocomplete="name" required maxlength="100"></label>
+      <label>Email address<input name="email" type="email" autocomplete="email" required maxlength="120"></label>
+      <label>Password<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label>
+      <small class="password-hint">Use at least 8 characters.</small>
+      <button class="primary auth-submit">Register administrator</button>
+    </form>
+    <p id="authMessage" class="auth-message hidden" role="alert"></p>
+    <p class="auth-foot"><a href="/login.html">Return to sign in</a></p>
+  </section>
+  <p class="auth-caption">Administrator registration is available once only.</p>
+</main>
+<script src="register.js"></script>
+</body>
+</html>
