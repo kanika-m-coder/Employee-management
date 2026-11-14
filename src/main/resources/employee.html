@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My StaffDesk | Employee</title><link rel="stylesheet" href="style.css"></head>
+<body class="employee-page">
+<header class="employee-header"><div class="auth-brand"><b class="mark">S</b><span>StaffDesk<small>EMPLOYEE PORTAL</small></span></div><button id="logout" class="secondary">Sign out</button></header>
+<main class="employee-main">
+  <section class="welcome employee-welcome"><div><small>EMPLOYEE PORTAL</small><h1 id="employeeName">Welcome</h1><p id="employeeDetails"></p></div></section>
+  <section class="heading"><div><h3>Request leave</h3><p>Submit a request for administrator review.</p></div></section>
+  <form id="leaveForm" class="formbox"><div class="fields">
+    <label>Leave type<select name="leave_type"><option>Casual</option><option>Sick</option><option>Earned</option><option>Other</option></select></label>
+    <label>From<input name="start_date" type="date" required></label><label>To<input name="end_date" type="date" required></label>
+    <label class="wide">Reason<input name="reason" maxlength="255"></label>
+  </div><button class="primary">Submit request</button></form>
+  <section class="heading"><div><h3>Attendance history</h3></div></section>
+  <div class="tablebox"><table><thead><tr><th>DATE</th><th>CHECK IN</th><th>CHECK OUT</th><th>STATUS</th></tr></thead><tbody id="attendanceRows"></tbody></table></div>
+  <section class="heading"><div><h3>My leave requests</h3></div></section>
+  <div class="tablebox"><table><thead><tr><th>PERIOD</th><th>TYPE</th><th>REASON</th><th>STATUS</th></tr></thead><tbody id="leaveRows"></tbody></table></div>
+  <section class="heading"><div><h3>My payroll</h3></div></section>
+  <div class="tablebox"><table><thead><tr><th>PAY MONTH</th><th>BASIC</th><th>ALLOWANCE</th><th>DEDUCTION</th><th>NET SALARY</th></tr></thead><tbody id="payrollRows"></tbody></table></div>
+  <div id="message" class="toast hidden"></div>
+</main>
+<script src="employee.js"></script>
+</body></html>

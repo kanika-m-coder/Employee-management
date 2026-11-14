@@ -1,6 +1,10 @@
 // AttendPay - Enterprise SaaS Frontend Core
 const user = JSON.parse(sessionStorage.getItem("user") || "null");
-if (!user && !location.pathname.endsWith("login.html") && !location.pathname.endsWith("register.html")) {
+const isAuthPage = location.pathname.endsWith("login.html") || 
+                   location.pathname.endsWith("register.html") || 
+                   location.pathname.endsWith("/login") || 
+                   location.pathname.endsWith("/register");
+if (!user && !isAuthPage) {
   location.href = "login.html";
 }
 

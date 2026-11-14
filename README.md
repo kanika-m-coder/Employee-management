@@ -1,26 +1,53 @@
-# AttendPay – Employee Attendance and Payroll Management Analysis System
-Scenario 13 · Register No. 43 · Java + MySQL + Python (pandas, matplotlib) + HTML/CSS/JS
+# AttendPay – Modern Enterprise Employee Attendance & Payroll Management SaaS
 
-## 1. Requirements
-JDK 17+ · MySQL 8 · Python 3.9+ · VS Code with "Extension Pack for Java"
+A comprehensive Employee Attendance, Leave Management, and Payroll Analysis Platform built with modern web technologies, Core Java, JDBC, MySQL, and Python data visualization.
 
-## 2. Setup
-1. Download `mysql-connector-j-8.4.0.jar` from https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.4.0/ and put it in `lib/`.
-2. Create the database (enter your MySQL password when asked):
-   `mysql -u root -p < database/schema.sql` then `mysql -u root -p < database/sample_data.sql`
-3. Edit `config.properties` with your MySQL user and password. On Mac/Linux, remove `#` from `python.cmd=python3`.
-4. `pip install -r python/requirements.txt`
+---
 
-## 3. Run
-Open the folder in VS Code and run from the terminal in the project root:
+## 🚀 Live Cloud Deployment (Vercel)
 
-    java -cp "lib/*" src/Main.java
+The frontend is live and deployed on Vercel:
+👉 **[https://employeeee-management.vercel.app](https://employeeee-management.vercel.app)**
 
-(or use Run and Debug > "Run AttendPay server"). Then open http://localhost:8080
+### Demo Login Credentials:
+- **Administrator Portal:**
+  - Username: `admin`
+  - Password: `admin123`
+- **Employee Portal:**
+  - Employee Code / ID: `101` (or `EMP001`)
+  - Password: `emp123`
 
-## 4. Login
-Admin: `admin` / `admin123` · Employee: Employee ID (e.g. `101`) / `emp123`
+---
 
-## Salary rules
-HRA 20%, DA 10%, PF 12% of basic (table `salary_rules`). Per-day pay = basic ÷ weekdays in the month. Absent = full-day deduction, half day = 0.5, approved paid leave = no deduction. Approved leave is written into attendance (Loss of Pay is marked Absent).
-In Payroll, choose "All employees" and a month (Aug–Nov 2026 has sample attendance) to generate payroll for the dashboard and charts.
+## 💻 Local Setup & Execution
+
+### Requirements
+- JDK 17+
+- MySQL 8.0+ / MariaDB
+- Python 3.9+ (for analysis & charts)
+- MySQL Connector/J in `lib/`
+
+### 1. Database Setup
+```bash
+mysql -u root -p < database/schema.sql
+```
+
+### 2. Run Local Server
+Using PowerShell:
+```powershell
+.\scripts\run.ps1
+```
+Or with `run.bat` / Core Java:
+```cmd
+java -cp "lib/*" src/Main.java
+```
+Then visit **http://localhost:8080** in your browser.
+
+---
+
+## 🎨 Enterprise SaaS Features
+- **Modern Dashboard:** Real-time statistics, monthly attendance trend charts, status distributions, and department breakdowns.
+- **Dark Midnight Sidebar:** Intuitive navigation with Lucide icons and active states.
+- **Attendance & Leave Management:** Complete leave requests, approvals, and daily attendance logs.
+- **Automated Payroll Engine:** Accurate statutory deductions, allowances, HRA/DA calculation, and itemized payslips.
+- **Analytics & Reports:** Python-powered attendance distribution and monthly payroll pattern visual charts.

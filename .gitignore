@@ -1,5 +1,6 @@
 # Compiled Java
 *.class
+out/
 
 # Python cache
 __pycache__/
@@ -8,10 +9,12 @@ __pycache__/
 *.venv
 env/
 venv/
+python/output/
 
 # System / OS
 Thumbs.db
 Desktop.ini
 .DS_Store
 
+# Vercel
 .vercel

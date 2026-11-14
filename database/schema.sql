@@ -1,32 +1,69 @@
--- Re-runnable: recreates the database from scratch
-DROP DATABASE IF EXISTS payroll_db;
-CREATE DATABASE payroll_db;
-USE payroll_db;
-CREATE TABLE departments (dept_id INT AUTO_INCREMENT PRIMARY KEY, dept_name VARCHAR(50) NOT NULL UNIQUE);
-CREATE TABLE employees (
-  emp_id INT AUTO_INCREMENT PRIMARY KEY, emp_name VARCHAR(100) NOT NULL, dept_id INT NOT NULL,
-  designation VARCHAR(80) NOT NULL, basic_salary DECIMAL(10,2) NOT NULL CHECK (basic_salary > 0),
-  join_date DATE NOT NULL, FOREIGN KEY (dept_id) REFERENCES departments(dept_id)) AUTO_INCREMENT=101;
-CREATE TABLE users (
-  user_id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) NOT NULL UNIQUE, password VARCHAR(100) NOT NULL,
-  role ENUM('ADMIN','EMPLOYEE') NOT NULL, emp_id INT NULL,
-  FOREIGN KEY (emp_id) REFERENCES employees(emp_id) ON DELETE CASCADE);
-CREATE TABLE attendance (
-  attendance_id INT AUTO_INCREMENT PRIMARY KEY, emp_id INT NOT NULL, att_date DATE NOT NULL,
-  status ENUM('Present','Absent','Half Day','On Leave') NOT NULL, working_hours DECIMAL(4,2) DEFAULT 0,
-  UNIQUE (emp_id, att_date), FOREIGN KEY (emp_id) REFERENCES employees(emp_id) ON DELETE CASCADE);
-CREATE TABLE leave_records (
-  leave_id INT AUTO_INCREMENT PRIMARY KEY, emp_id INT NOT NULL,
-  leave_type ENUM('Casual','Sick','Earned','Loss of Pay') NOT NULL, start_date DATE NOT NULL, end_date DATE NOT NULL,
-  total_days INT NOT NULL, reason VARCHAR(255), status ENUM('Pending','Approved','Rejected') DEFAULT 'Approved',
-  CHECK (end_date >= start_date), FOREIGN KEY (emp_id) REFERENCES employees(emp_id) ON DELETE CASCADE);
-CREATE TABLE salary_rules (rule_id INT PRIMARY KEY, hra_percent DECIMAL(5,2), da_percent DECIMAL(5,2), pf_percent DECIMAL(5,2));
-INSERT INTO salary_rules VALUES (1,20,10,12);
-CREATE TABLE payroll (
-  payroll_id INT AUTO_INCREMENT PRIMARY KEY, emp_id INT NOT NULL, pay_month TINYINT NOT NULL, pay_year SMALLINT NOT NULL,
-  working_days INT NOT NULL, days_present DECIMAL(4,1) NOT NULL, paid_leave_days DECIMAL(4,1) NOT NULL DEFAULT 0,
-  absent_days DECIMAL(4,1) NOT NULL, basic DECIMAL(10,2) NOT NULL, hra DECIMAL(10,2) NOT NULL, da DECIMAL(10,2) NOT NULL,
-  pf_deduction DECIMAL(10,2) NOT NULL, absence_deduction DECIMAL(10,2) NOT NULL, net_salary DECIMAL(10,2) NOT NULL,
-  generated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE (emp_id, pay_month, pay_year),
-  FOREIGN KEY (emp_id) REFERENCES employees(emp_id) ON DELETE CASCADE);
-CREATE INDEX idx_att_date ON attendance(att_date);
+CREATE DATABASE IF NOT EXISTS employee_payroll;
+USE employee_payroll;
+
+CREATE TABLE IF NOT EXISTS employees (
+ employee_id INT AUTO_INCREMENT PRIMARY KEY,
+ employee_code VARCHAR(20) NOT NULL UNIQUE,
+ full_name VARCHAR(100) NOT NULL,
+ department VARCHAR(60) NOT NULL,
+ designation VARCHAR(60) NOT NULL,
+ email VARCHAR(120),
+ phone VARCHAR(20),
+ password_hash VARCHAR(255),
+ basic_salary DECIMAL(10,2) NOT NULL DEFAULT 0,
+ date_joined DATE NOT NULL,
+ employment_status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS admin_accounts (
+ admin_id TINYINT NOT NULL PRIMARY KEY,
+ full_name VARCHAR(100) NOT NULL,
+ email VARCHAR(120) NOT NULL UNIQUE,
+ password_hash VARCHAR(255) NOT NULL,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS attendance (
+ attendance_id INT AUTO_INCREMENT PRIMARY KEY,
+ employee_id INT NOT NULL,
+ attendance_date DATE NOT NULL,
+ check_in TIME NULL,
+ check_out TIME NULL,
+ attendance_status VARCHAR(20) NOT NULL DEFAULT 'PRESENT',
+ remarks VARCHAR(255),
+ FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE,
+ UNIQUE KEY uq_employee_day (employee_id, attendance_date)
+);
+
+CREATE TABLE IF NOT EXISTS leave_requests (
+ leave_id INT AUTO_INCREMENT PRIMARY KEY,
+ employee_id INT NOT NULL,
+ start_date DATE NOT NULL,
+ end_date DATE NOT NULL,
+ leave_type VARCHAR(40) NOT NULL,
+ reason VARCHAR(255),
+ leave_status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+ requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS payroll (
+ payroll_id INT AUTO_INCREMENT PRIMARY KEY,
+ employee_id INT NOT NULL,
+ pay_month CHAR(7) NOT NULL,
+ basic_salary DECIMAL(10,2) NOT NULL,
+ allowance DECIMAL(10,2) NOT NULL DEFAULT 0,
+ deduction DECIMAL(10,2) NOT NULL DEFAULT 0,
+ net_salary DECIMAL(10,2) NOT NULL,
+ generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE,
+ UNIQUE KEY uq_employee_month (employee_id, pay_month)
+);
+
+INSERT IGNORE INTO employees
+(employee_code,full_name,department,designation,email,phone,basic_salary,date_joined)
+VALUES
+('EMP001','Arun Kumar','Administration','Office Assistant','arun@example.com','9000000001',22000,'2024-06-10'),
+('EMP002','Meena Raj','Accounts','Accountant','meena@example.com','9000000002',28000,'2023-11-02'),
+('EMP003','Karthik S','IT','Junior Developer','karthik@example.com','9000000003',32000,'2025-01-15');
