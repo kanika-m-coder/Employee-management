@@ -1,11 +1,26 @@
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $ProjectRoot
+$DriverVersion = "9.3.0"
+$DriverDirectory = Join-Path $ProjectRoot "lib"
 $Driver = Join-Path $ProjectRoot "lib\mysql-connector-j.jar"
 if (!(Test-Path $Driver)) {
-    Write-Host "MySQL Connector/J was not found." -ForegroundColor Red
-    Write-Host "Download and place the JAR at: $Driver"
-    exit 1
+    New-Item -ItemType Directory -Force -Path $DriverDirectory | Out-Null
+    $DownloadUrl = "https://repo.maven.apache.org/maven2/com/mysql/mysql-connector-j/$DriverVersion/mysql-connector-j-$DriverVersion.jar"
+    $TemporaryDriver = "$Driver.download"
+    Write-Host "Downloading MySQL Connector/J $DriverVersion..."
+    try {
+        Invoke-WebRequest -Uri $DownloadUrl -OutFile $TemporaryDriver -UseBasicParsing
+        if (!(Test-Path $TemporaryDriver) -or (Get-Item $TemporaryDriver).Length -eq 0) {
+            throw "The downloaded MySQL Connector/J file is empty."
+        }
+        Move-Item -Path $TemporaryDriver -Destination $Driver -Force
+    } catch {
+        if (Test-Path $TemporaryDriver) {
+            Remove-Item -Path $TemporaryDriver -Force
+        }
+        throw "Could not download MySQL Connector/J from $DownloadUrl. Check your internet connection and try again. $($_.Exception.Message)"
+    }
 }
 New-Item -ItemType Directory -Force -Path "out" | Out-Null
 $Sources = Get-ChildItem -Path "src\main\java" -Filter "*.java" -Recurse | ForEach-Object { $_.FullName }
