@@ -10,7 +10,18 @@
     <form id="registerForm">
       <label>Full name<input name="full_name" autocomplete="name" required maxlength="100"></label>
       <label>Email address<input name="email" type="email" autocomplete="email" required maxlength="120"></label>
-      <label>Password<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label>
+      <label>Password
+        <span class="password-field">
+          <input id="registerPassword" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+          <button id="registerPasswordToggle" class="password-toggle" type="button" aria-label="Show password" title="Show password" aria-controls="registerPassword" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+              <path class="password-eye-slash" d="m3 3 18 18"></path>
+            </svg>
+          </button>
+        </span>
+      </label>
       <small class="password-hint">Use at least 8 characters.</small>
       <button class="primary auth-submit">Register administrator</button>
     </form>

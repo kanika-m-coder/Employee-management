@@ -1,4 +1,12 @@
 const form=document.getElementById("registerForm"),message=document.getElementById("authMessage");
+const password=document.getElementById("registerPassword"),passwordToggle=document.getElementById("registerPasswordToggle");
+passwordToggle.onclick=()=>{
+  const visible=password.type==="password";
+  password.type=visible?"text":"password";
+  passwordToggle.setAttribute("aria-label",visible?"Hide password":"Show password");
+  passwordToggle.title=visible?"Hide password":"Show password";
+  passwordToggle.setAttribute("aria-pressed",String(visible));
+};
 async function checkRegistration(){
   try{
     const response=await fetch("/api/auth/session"),data=await response.json();
