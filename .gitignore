@@ -1,20 +1,5 @@
-# Compiled Java
-*.class
 out/
-
-# Python cache
-__pycache__/
-*.py[cod]
-*$py.class
-*.venv
-env/
-venv/
+*.class
+lib/*.jar
 python/output/
-
-# System / OS
-Thumbs.db
-Desktop.ini
-.DS_Store
-
-# Vercel
-.vercel
+__pycache__/

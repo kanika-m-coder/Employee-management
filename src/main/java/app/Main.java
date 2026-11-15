@@ -13,8 +13,22 @@ public class Main {
     private static final Path WEB=Paths.get("src/main/resources");
 
     public static void main(String[] args) throws Exception {
-        try(Connection ignored=Database.getConnection()){System.out.println("MySQL connection successful.");}
-        Database.initializeAuthSchema();
+        try {
+            Database.initializeWithRetry();
+            System.out.println("MySQL connection successful.");
+        } catch (SQLException e) {
+            System.err.println("Unable to connect to or initialize the MySQL database.");
+            if ("28000".equals(e.getSQLState())) {
+                System.err.println("MySQL rejected the account credentials. Run scripts\\run.ps1 and enter the correct password,");
+                System.err.println("or set DB_USER and DB_PASSWORD in PowerShell before starting the app.");
+            } else {
+                System.err.println("Check that MySQL Server is running, the employee_payroll database is set up,");
+                System.err.println("and DB_USER/DB_PASSWORD match your MySQL account.");
+            }
+            System.err.println("Details: " + e.getMessage());
+            System.exit(1);
+            return;
+        }
         HttpServer server=HttpServer.create(new InetSocketAddress(PORT),0);
         server.createContext("/api/auth",Main::auth);
         server.createContext("/api/employee",Main::employeePortal);
@@ -258,7 +272,15 @@ public class Main {
         return true;
     }
     private static String query(HttpExchange x,String key){String q=x.getRequestURI().getRawQuery();if(q!=null)for(String pair:q.split("&")){String[]a=pair.split("=",2);if(a[0].equals(key)&&a.length>1)return a[1];}return "";}
-    private static void fail(HttpExchange x,Exception e)throws IOException{e.printStackTrace();send(x,400,row("error",e.getMessage()==null?"Request failed":e.getMessage()));}
+    private static void fail(HttpExchange x,Exception e)throws IOException{
+        if(e instanceof SQLException && Database.isConnectionFailure((SQLException)e)){
+            System.err.println("MySQL connection lost: " + e.getMessage());
+            send(x,503,row("error","MySQL is temporarily unavailable. Check that MySQL Server is running, then try again."));
+            return;
+        }
+        e.printStackTrace();
+        send(x,400,row("error",e.getMessage()==null?"Request failed":e.getMessage()));
+    }
     private static void staticFiles(HttpExchange x)throws IOException{
         String path=x.getRequestURI().getPath();
         if(path.equals("/")){

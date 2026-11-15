@@ -1,53 +1,65 @@
-# AttendPay – Modern Enterprise Employee Attendance & Payroll Management SaaS
+# Employee Attendance and Payroll Management System
 
-A comprehensive Employee Attendance, Leave Management, and Payroll Analysis Platform built with modern web technologies, Core Java, JDBC, MySQL, and Python data visualization.
+A conventional academic project using **Core Java, JDBC, MySQL/SQL, Python, HTML, CSS and JavaScript**.
 
----
+This version deliberately does not use Spring Boot, Maven, Gradle, Flask or Django. The backend uses Java's built-in HTTP server and JDBC.
 
-## 🚀 Live Cloud Deployment (Vercel)
+## Requirements
+- Windows 10/11
+- JDK 17 or later
+- MySQL Server / MySQL Workbench
+- Python 3.10+ (for analysis)
+- VS Code
+- MySQL Connector/J
 
-The frontend is live and deployed on Vercel:
-👉 **[https://employeeee-management.vercel.app](https://employeeee-management.vercel.app)**
+## 1. Set up MySQL
+Open `database/schema.sql` in MySQL Workbench and execute it. It creates the `employee_payroll` database, tables and a few demonstration employees.
 
-### Demo Login Credentials:
-- **Administrator Portal:**
-  - Username: `admin`
-  - Password: `admin123`
-- **Employee Portal:**
-  - Employee Code / ID: `101` (or `EMP001`)
-  - Password: `emp123`
+The Java app connects to localhost:3306 and database `employee_payroll`, using `root` by default for the username. The launcher securely prompts for the MySQL password if `DB_PASSWORD` is not set; enter the password configured for your MySQL account (or press Enter only if that account has no password). You can also set `DB_USER` and `DB_PASSWORD` in PowerShell before starting the app. If MySQL is still starting, the app retries transient connection failures for up to about eight seconds before showing a setup hint.
 
----
+## 2. Add JDBC driver
+Download MySQL Connector/J from https://dev.mysql.com/downloads/connector/j/
+Extract it and place the driver JAR in `lib` with this exact name:
+`mysql-connector-j.jar`
 
-## 💻 Local Setup & Execution
+## 3. Start the website
+Open the project folder in VS Code. In PowerShell run:
 
-### Requirements
-- JDK 17+
-- MySQL 8.0+ / MariaDB
-- Python 3.9+ (for analysis & charts)
-- MySQL Connector/J in `lib/`
-
-### 1. Database Setup
-```bash
-mysql -u root -p < database/schema.sql
-```
-
-### 2. Run Local Server
-Using PowerShell:
 ```powershell
 .\scripts\run.ps1
 ```
-Or with `run.bat` / Core Java:
-```cmd
-java -cp "lib/*" src/Main.java
+
+If script execution is blocked:
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run.ps1
 ```
-Then visit **http://localhost:8080** in your browser.
 
----
+Open http://localhost:8080. Keep the terminal open while using the application. Press Ctrl+C to stop it.
 
-## 🎨 Enterprise SaaS Features
-- **Modern Dashboard:** Real-time statistics, monthly attendance trend charts, status distributions, and department breakdowns.
-- **Dark Midnight Sidebar:** Intuitive navigation with Lucide icons and active states.
-- **Attendance & Leave Management:** Complete leave requests, approvals, and daily attendance logs.
-- **Automated Payroll Engine:** Accurate statutory deductions, allowances, HRA/DA calculation, and itemized payslips.
-- **Analytics & Reports:** Python-powered attendance distribution and monthly payroll pattern visual charts.
+## 4. Sign in
+- On the first visit, choose **Register the administrator account** and create the single administrator account. Additional admin registrations are blocked.
+- The administrator can create employee accounts by setting an initial password when adding an employee.
+- Employees sign in with their employee code and password, and can view their attendance, leave requests, and payroll and submit leave requests.
+- Passwords are stored as salted PBKDF2 hashes. Existing demonstration employee records do not have login passwords; create new employee records to provision sign-ins.
+
+## 5. Run Python analysis
+```powershell
+py -m pip install -r python\requirements.txt
+$env:DB_USER="root"
+$env:DB_PASSWORD="your_mysql_password"
+py python\analyze_attendance.py
+```
+Reports are saved in `python/output/`.
+
+## Included modules
+- Employee registration, directory and removal
+- Attendance entry and history
+- Leave request creation and approval/rejection
+- Monthly payroll record generation
+- Summary figures on the overview page
+- Python CSV summaries and attendance chart
+
+Payroll formula used in this sample: **net salary = basic salary + allowance - deduction**.
+
+## Academic project note
+This is a learning/demo project, not a production HR system. It includes basic role-based login for administrators and employees, but sessions are stored in memory and the application is not production-hardened. It does not include audit trails or deployment hardening. Review attendance rules and payroll calculations with your faculty before submission. Use sample data only.
