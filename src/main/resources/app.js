@@ -1,6 +1,19 @@
 const $=id=>document.getElementById(id),money=n=>"₹"+Number(n||0).toLocaleString("en-IN",{maximumFractionDigits:2}),today=new Date().toISOString().slice(0,10);
 $("todayLabel").textContent=new Date().toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
 $("signOut").onclick=async()=>{await fetch("/api/auth/logout",{method:"POST"});location.replace("/login.html");};
+$("deleteAdmin").onclick=()=>{$("deleteAdminMessage").classList.add("hidden");$("deleteAdminDialog").showModal();};
+$("cancelDeleteAdmin").onclick=()=>$("deleteAdminDialog").close();
+$("deleteAdminDialog").addEventListener("close",()=>$("deleteAdminForm").reset());
+$("deleteAdminForm").onsubmit=async event=>{
+  event.preventDefault();
+  const form=event.currentTarget,password=form.elements.password.value,message=$("deleteAdminMessage");
+  message.classList.add("hidden");
+  try{
+    await api("auth/admin-account",{method:"DELETE",body:JSON.stringify({password})});
+    location.replace("/login.html");
+  }catch(error){message.textContent=error.message;message.classList.remove("hidden");}
+  finally{form.elements.password.value="";}
+};
 document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>showView(b.dataset.view));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showView(b.dataset.go));
 document.querySelectorAll("[data-hide]").forEach(b=>b.onclick=()=>$(b.dataset.hide).classList.add("hidden"));

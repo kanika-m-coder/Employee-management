@@ -32,6 +32,7 @@ Open http://localhost:8080. Keep the terminal open while using the application. 
 
 ## 3. Sign in
 - On the first visit, choose **Register the administrator account** and create the single administrator account. Additional admin registrations are blocked.
+- The signed-in administrator can use **Delete admin account** in the admin module. This permanently deletes the admin login, signs out all admin sessions, and makes admin registration available again on the login page; employee accounts and records remain.
 - The administrator can create employee accounts by setting an initial password when adding an employee.
 - Employees sign in with their employee code and password, and can view their attendance, leave requests, and payroll and submit leave requests.
 - Passwords are stored as salted PBKDF2 hashes. Existing demonstration employee records do not have login passwords; create new employee records to provision sign-ins.

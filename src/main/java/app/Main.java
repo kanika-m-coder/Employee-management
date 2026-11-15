@@ -54,6 +54,19 @@ public class Main {
             if(path.equals("/api/auth/logout")&&method.equals("POST")){
                 Auth.endSession(x);send(x,200,row("message","Signed out"));return;
             }
+            if(path.equals("/api/auth/admin-account")&&method.equals("DELETE")){
+                Auth.UserSession session=Auth.session(x);
+                if(session==null){send(x,401,row("error","Please sign in."));return;}
+                if(!session.role.equals("ADMIN")){send(x,403,row("error","Access denied."));return;}
+                char[] password=str(body(x),"password").toCharArray();
+                if(password.length==0){send(x,400,row("error","Enter your admin password to confirm deletion."));return;}
+                boolean deleted;
+                try{deleted=Auth.deleteAdmin(password);}finally{Arrays.fill(password,'\0');}
+                if(!deleted){send(x,401,row("error","Incorrect password or admin account is unavailable."));return;}
+                Auth.revokeAdminSessions();
+                Auth.endSession(x);
+                send(x,200,row("message","Administrator account deleted"));return;
+            }
             if(path.equals("/api/auth/register-admin")&&method.equals("POST")){
                 Map<String,Object>b=body(x);String name=str(b,"full_name").trim(),email=str(b,"email").trim().toLowerCase(Locale.ROOT);
                 char[] password=str(b,"password").toCharArray();

@@ -49,6 +49,40 @@ final class Auth {
         return "ADMIN";
     }
 
+    static boolean deleteAdmin(char[] password) throws SQLException, GeneralSecurityException {
+        try (Connection c = Database.getConnection()) {
+            c.setAutoCommit(false);
+            try {
+                String encoded;
+                try (PreparedStatement p = c.prepareStatement(
+                        "SELECT password_hash FROM admin_accounts WHERE admin_id=1 FOR UPDATE");
+                     ResultSet r = p.executeQuery()) {
+                    if (!r.next()) {
+                        c.rollback();
+                        return false;
+                    }
+                    encoded = r.getString(1);
+                }
+                if (!verify(password, encoded)) {
+                    c.rollback();
+                    return false;
+                }
+                try (PreparedStatement p = c.prepareStatement("DELETE FROM admin_accounts WHERE admin_id=1")) {
+                    p.executeUpdate();
+                }
+                c.commit();
+                return true;
+            } catch (SQLException | GeneralSecurityException e) {
+                c.rollback();
+                throw e;
+            }
+        }
+    }
+
+    static void revokeAdminSessions() {
+        SESSIONS.entrySet().removeIf(entry -> entry.getValue().role.equals("ADMIN"));
+    }
+
     static UserSession authenticateAdmin(String email, char[] password) throws SQLException, GeneralSecurityException {
         try (Connection c = Database.getConnection(); PreparedStatement p = c.prepareStatement(
                 "SELECT password_hash FROM admin_accounts WHERE admin_id=1 AND email=?")) {
